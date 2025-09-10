@@ -1,4 +1,4 @@
-# Unity-Robot-Simulation
+# Advanced-Unity-Robot-Simulation
 Advanced Unity Robot Simulation
 
 Goals:
