@@ -1,6 +1,6 @@
 # Unity-Robot-Simulation
-Unity Robot Simulation
+Advanced Unity Robot Simulation
 
-r to reset position, i to invert mouse, b to explode, m unlocks the mouse (or relocks it)
-
-w and s for forward and back, a and d for left and right, mouse controllers pitch and roll, q and e for yaw
+Goals:
+ - Blackbox of sorts for data obtained from testing
+ - using a CFD software (probably OpenFOAM) and visualizing/using the data in the simulation for testing purposes
