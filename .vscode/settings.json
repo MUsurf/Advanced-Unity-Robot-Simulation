@@ -55,5 +55,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "SURF Robot Simulation.sln"
+    "dotnet.defaultSolution": "SURF Advanced Robot Simulation.sln"
 }
