@@ -29,6 +29,7 @@ public class MotorScript : MonoBehaviour
     private List<Vector3> MovementOverrideList = new List<Vector3>();
     public MovementController movementControllerScript;
     public PID PIDScript;
+    [SerializeField] private simTestScript testScript;
     public bool overrideMovement = false;
     public GameObject InvertMouseButton;
     private float timeSinceLastIToggle = 0f;
@@ -65,16 +66,16 @@ public class MotorScript : MonoBehaviour
     void FixedUpdate()
     {
 
-        int[] givenForces = new int[8]; // TODO - here is where we get the motor powers
+        // TODO - here is where we get the motor powers
 
         for (int i = 0; i < force.Length / 2; i++)
         {
-            force[i] = new Vector3((givenForces[i] < 0 ? givenForces[i] * 40 : givenForces[i] * 51.4f) * (Mathf.Sqrt(2)/2), 0, (givenForces[i] < 0 ? givenForces[i] * 40 : givenForces[i] * 51.4f) * (Mathf.Sqrt(2)/2));
+            force[i] = new Vector3((testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 : testScript.powerList[i] * 51.4f) * (Mathf.Sqrt(2)/2), 0, (testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 : testScript.powerList[i] * 51.4f) * (Mathf.Sqrt(2)/2));
         }
         
         for(int i = force.Length / 2; i < force.Length; i++)
         {
-            force[i] = new Vector3(0, givenForces[i] < 0 ? givenForces[i] * 40 : givenForces[i] * 51.4f, 0);
+            force[i] = new Vector3(0, testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 : testScript.powerList[i] * 51.4f, 0);
         }
 
         // Debug.Log($"force[0]: {force[0]}, force[1]: {force[1]}, force[2]: {force[2]}, force[3]: {force[3]}, force[4]: {force[4]}, force[5]: {force[5]}, force[6]: {force[6]}, force[7]: {force[7]}");

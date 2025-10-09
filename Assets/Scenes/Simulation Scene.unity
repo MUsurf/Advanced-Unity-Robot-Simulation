@@ -1411,7 +1411,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f3967857eff65448bce292c545972eb, type: 3}
   m_Name: 
@@ -7013,6 +7013,7 @@ GameObject:
   - component: {fileID: 9193295145256729476}
   - component: {fileID: 9193295145256729475}
   - component: {fileID: 9193295145256729478}
+  - component: {fileID: 9193295145256729481}
   m_Layer: 6
   m_Name: Real Robot
   m_TagString: Untagged
@@ -7242,6 +7243,7 @@ MonoBehaviour:
   maxSpeed: 200
   movementControllerScript: {fileID: 0}
   PIDScript: {fileID: 9193295145256729480}
+  testScript: {fileID: 9193295145256729481}
   overrideMovement: 0
   InvertMouseButton: {fileID: 2145012752}
   ThirdPersonCamera: {fileID: 1914540611}
@@ -7346,6 +7348,27 @@ MonoBehaviour:
   - 0.02
   motorScript: {fileID: 9193295145256729473}
   yawTrack: 0
+--- !u!114 &9193295145256729481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3023082051099529487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5e21bfc5b679024db77dd9479445d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  powerList:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
