@@ -7,10 +7,12 @@ public class ROSCommunicator : MonoBehaviour
     [SerializeField] Transform subTransform;
 
     Vector3 lastVelocity;
+    Vector3 lastAngularVelocity;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         lastVelocity = new Vector3(0, 0, 0);
+        lastAngularVelocity = new Vector3(0, 0, 0);
     }
 
     // Update is called once per frame
@@ -18,6 +20,12 @@ public class ROSCommunicator : MonoBehaviour
     {
         Vector3 acceleration = subRigidbody.linearVelocity - lastVelocity;
 
-        File.WriteAllLines("D:\\Unity\\Games\\SURF Advanced Robot Simulation\\robotdata.txt", new string[] { $"Accelerations: ({acceleration.x}, {acceleration.y}, {acceleration.z}), Rotations: ({subTransform.eulerAngles.x}, {subTransform.eulerAngles.y}, {subTransform.eulerAngles.z})" });
+        Vector3 angularAcceleration = subRigidbody.angularVelocity - lastAngularVelocity;
+
+        lastVelocity = subRigidbody.linearVelocity;
+
+        lastAngularVelocity = subRigidbody.angularVelocity;
+
+        File.WriteAllLines("D:\\Unity\\Games\\SURF Advanced Robot Simulation\\robotdata.txt", new string[] { $"{acceleration.x}, {acceleration.y}, {acceleration.z}, {angularAcceleration.x}, {angularAcceleration.y}, {angularAcceleration.z}" });
     }
 }
