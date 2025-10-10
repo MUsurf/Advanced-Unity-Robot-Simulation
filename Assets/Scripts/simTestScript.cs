@@ -17,7 +17,7 @@ public class simTestScript : MonoBehaviour
         {
             for(int i = 0; i < powerList.Length; i++)
             {
-                powerList[i] = Random.Range(-1f, 1f);
+                powerList[i] = Random.Range(-100f, 100f);
             }
             yield return new WaitForSeconds(8f);
         }

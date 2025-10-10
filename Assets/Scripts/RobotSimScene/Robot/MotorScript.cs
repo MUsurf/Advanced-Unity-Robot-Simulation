@@ -68,14 +68,16 @@ public class MotorScript : MonoBehaviour
 
         // TODO - here is where we get the motor powers
 
+        // TODO - you can probably do the 40 and 51.4f better using a custom line
+
         for (int i = 0; i < force.Length / 2; i++)
         {
-            force[i] = new Vector3((testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 : testScript.powerList[i] * 51.4f) * (Mathf.Sqrt(2)/2), 0, (testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 : testScript.powerList[i] * 51.4f) * (Mathf.Sqrt(2)/2));
+            force[i] = new Vector3((testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100) * (Mathf.Sqrt(2)/2), 0, (testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100) * (Mathf.Sqrt(2)/2));
         }
         
         for(int i = force.Length / 2; i < force.Length; i++)
         {
-            force[i] = new Vector3(0, testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 : testScript.powerList[i] * 51.4f, 0);
+            force[i] = new Vector3(0, testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100, 0);
         }
 
         // Debug.Log($"force[0]: {force[0]}, force[1]: {force[1]}, force[2]: {force[2]}, force[3]: {force[3]}, force[4]: {force[4]}, force[5]: {force[5]}, force[6]: {force[6]}, force[7]: {force[7]}");
