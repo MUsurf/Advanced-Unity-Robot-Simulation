@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.IO;
+using System.Runtime.Serialization;
 
 // TODO - max thrust is - 51.4 N and 40 N
 // TODO - invert mouse button
@@ -10,29 +11,30 @@ using System.IO;
 
 public class MotorScript : MonoBehaviour
 {
+    //[SerializeField]
+    private static string fileName;
+    
+    private string inputFilePath = Path.Combine(Application.dataPath, "Assets", fileName);
     public Rigidbody rb;
     public float maxSpeed;
-    private Vector3 force1;
-    private Vector3 force2;
-    private Vector3 force3;
-    private Vector3 force4;
-    private Vector3 force5;
-    private Vector3 force6;
-    private Vector3 force7;
-    private Vector3 force8;
+    private Vector3[] force = new Vector3[8];
     //front left, front right, back left, back right XY motors
     //then front left, front right, back left, back right Z motors
-    private Vector3 position1 = new Vector3(1.95f, 0f, 4.9f);
-    private Vector3 position2 = new Vector3(-1.95f, 0f, 4.9f);
-    private Vector3 position3 = new Vector3(1.95f, 0f, -4.9f);
-    private Vector3 position4 = new Vector3(-1.95f, 0f, -4.9f);
-    private Vector3 position5 = new Vector3(2.72f, 0f, 5.66f);
-    private Vector3 position6 = new Vector3(-2.72f, 0f, 5.66f);
-    private Vector3 position7 = new Vector3(2.72f, 0f, -5.66f);
-    private Vector3 position8 = new Vector3(-2.72f, 0f, -5.66f);
+    private Vector3[] position =
+    {
+        new Vector3(1.95f, 0f, 4.9f),
+        new Vector3(-1.95f, 0f, 4.9f),
+        new Vector3(1.95f, 0f, -4.9f),
+        new Vector3(-1.95f, 0f, -4.9f),
+        new Vector3(2.72f, 0f, 5.66f),
+        new Vector3(-2.72f, 0f, 5.66f),
+        new Vector3(2.72f, 0f, -5.66f),
+        new Vector3(-2.72f, 0f, -5.66f),
+    };
     private List<Vector3> MovementOverrideList = new List<Vector3>();
     public MovementController movementControllerScript;
     public PID PIDScript;
+    [SerializeField] private simTestScript testScript;
     public bool overrideMovement = false;
     public GameObject InvertMouseButton;
     private float timeSinceLastIToggle = 0f;
@@ -52,7 +54,7 @@ public class MotorScript : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        if(!overrideMovement)
+        if (!overrideMovement)
         {
             InvertMouseButton.SetActive(false);
         }
@@ -64,75 +66,61 @@ public class MotorScript : MonoBehaviour
         maxSpeed = 320f;
         explodeQuad.SetActive(false);
     }
-
-    // FixedUpdate is called once per fixed frame (physics engine)
-    void FixedUpdate()
-    {   
-        Vector3 localposition1 = transform.TransformPoint(position1);
-        Vector3 localposition2 = transform.TransformPoint(position2);
-        Vector3 localposition3 = transform.TransformPoint(position3);
-        Vector3 localposition4 = transform.TransformPoint(position4);
-        Vector3 localposition5 = transform.TransformPoint(position5);
-        Vector3 localposition6 = transform.TransformPoint(position6);
-        Vector3 localposition7 = transform.TransformPoint(position7);
-        Vector3 localposition8 = transform.TransformPoint(position8);
-
-        List<Vector3> forceList;
-
-        forceList = PIDScript?.getVectors();
-
-        if(forceList != null)
+    
+    private string ReadTextFile(string filePath)
+    {
+        if (File.Exists(filePath))
         {
-            force1 = forceList[0];
-            force2 = forceList[1];
-            force3 = forceList[2];
-            force4 = forceList[3];
-            force5 = forceList[4];
-            force6 = forceList[5];
-            force7 = forceList[6];
-            force8 = forceList[7];
-        }
-
-
-        if(overrideMovement)
-        {
-            MovementOverrideList = movementControllerScript.MovementOverride();
-            force1 = MovementOverrideList[0];
-            force2 = MovementOverrideList[1];
-            force3 = MovementOverrideList[2];
-            force4 = MovementOverrideList[3];
-            force5 = MovementOverrideList[4];
-            force6 = MovementOverrideList[5];
-            force7 = MovementOverrideList[6];
-            force8 = MovementOverrideList[7];
+            StreamReader reader = new StreamReader(filePath);
+            string line = reader.ReadLine();
+            if (line != null)
+            {
+                Debug.LogWarning("Input: "  + line);
+                return line;
+            }
+            else
+            {
+                Debug.LogWarning("The file is empty or the first line is null.");
+            }
         }
         else
         {
-            // Debug.Log($"force1: {force1}, force2: {force2}, force3: {force3}, force4: {force4}, force5: {force5}, force6: {force6}, force7: {force7}, force8: {force8}");
+            Debug.LogError("File not found at: " + filePath);
+        }
+        return null;
+    }
+
+    // FixedUpdate is called once per fixed frame (physics engine)
+    void FixedUpdate()
+    {
+
+        // TODO - here is where we get the motor powers
+        
+        // TODO - you can probably do the 40 and 51.4f better using a custom line
+
+        for (int i = 0; i < force.Length / 2; i++)
+        {
+            force[i] = new Vector3((testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100) * (Mathf.Sqrt(2)/2), 0, (testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100) * (Mathf.Sqrt(2)/2));
+        }
+        
+        for(int i = force.Length / 2; i < force.Length; i++)
+        {
+            force[i] = new Vector3(0, testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100, 0);
         }
 
-        // NYC Skyline
-        Vector3 localforce1 = transform.TransformDirection(force1);
-        Vector3 localforce2 = transform.TransformDirection(force2);
-        Vector3 localforce3 = transform.TransformDirection(force3);
-        Vector3 localforce4 = transform.TransformDirection(force4);
-        Vector3 localforce5 = transform.TransformDirection(force5);
-        Vector3 localforce6 = transform.TransformDirection(force6);
-        Vector3 localforce7 = transform.TransformDirection(force7);
-        Vector3 localforce8 = transform.TransformDirection(force8);
-        rb.AddForceAtPosition(localforce1, localposition1, ForceMode.Force);
-        rb.AddForceAtPosition(localforce2, localposition2, ForceMode.Force);
-        rb.AddForceAtPosition(localforce3, localposition3, ForceMode.Force);
-        rb.AddForceAtPosition(localforce4, localposition4, ForceMode.Force);
-        rb.AddForceAtPosition(localforce5, localposition5, ForceMode.Force);
-        rb.AddForceAtPosition(localforce6, localposition6, ForceMode.Force);
-        rb.AddForceAtPosition(localforce7, localposition7, ForceMode.Force);
-        rb.AddForceAtPosition(localforce8, localposition8, ForceMode.Force);           
+        // Debug.Log($"force[0]: {force[0]}, force[1]: {force[1]}, force[2]: {force[2]}, force[3]: {force[3]}, force[4]: {force[4]}, force[5]: {force[5]}, force[6]: {force[6]}, force[7]: {force[7]}");
+
+        for(int i = 0; i < force.Length; i++)
+        {
+            rb.AddForceAtPosition(transform.TransformDirection(force[i]), transform.TransformPoint(position[i]), ForceMode.Force);
+        }
+
+        // NYC Skyline (post 9/11)        
     }
 
     public string getMotorValues()
     {
-        return $"{Mathf.Clamp(force1.z / maxSpeed / .707f, -1, 1)}, {Mathf.Clamp(force2.z / maxSpeed / .707f, -1, 1)}, {Mathf.Clamp(force3.z / maxSpeed / .707f, -1, 1)}, {Mathf.Clamp(force4.z / maxSpeed / .707f, -1, 1)}, {force5.y / maxSpeed}, {force6.y / maxSpeed}, {force7.y / maxSpeed}, {force8.y / maxSpeed}";
+        return $"{Mathf.Clamp(force[0].z / maxSpeed / .707f, -1, 1)}, {Mathf.Clamp(force[1].z / maxSpeed / .707f, -1, 1)}, {Mathf.Clamp(force[2].z / maxSpeed / .707f, -1, 1)}, {Mathf.Clamp(force[3].z / maxSpeed / .707f, -1, 1)}, {force[4].y / maxSpeed}, {force[5].y / maxSpeed}, {force[6].y / maxSpeed}, {force[7].y / maxSpeed}";
     }
 
     void OnCollisionEnter(Collision collision)
