@@ -1,7 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Collections;
 using UnityEngine.UI;
 using System.IO;
+using System;
 
 // TODO - max thrust is - 51.4 N and 40 N
 // TODO - invert mouse button
@@ -10,6 +13,10 @@ using System.IO;
 
 public class MotorScript : MonoBehaviour
 {
+    private static string fileName = "motorIO.txt";
+    float[] motorPowers = new float[8];
+    
+    private string inputFilePath = Path.Combine(Application.dataPath, "Assets", fileName);
     public Rigidbody rb;
     public float maxSpeed;
     private Vector3[] force = new Vector3[8];
@@ -45,11 +52,23 @@ public class MotorScript : MonoBehaviour
     public GameObject explodeQuad;
     public GameObject mainCamera;
 
+    IEnumerator updateMotorPowers()
+    {
+        //TODO: PARSE THE LINE!
+        char delimiter = ',';
+        string[] line = ReadTextFile(inputFilePath).Split(delimiter);
+        motorPowers = Array.ConvertAll(line, s => float.Parse(s, CultureInfo.InvariantCulture));
+
+        yield return new WaitForSeconds(1);
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        StartCoroutine(updateMotorPowers());
+
         rb = GetComponent<Rigidbody>();
-        if(!overrideMovement)
+        if (!overrideMovement)
         {
             InvertMouseButton.SetActive(false);
         }
@@ -60,6 +79,36 @@ public class MotorScript : MonoBehaviour
         rb.useGravity = false;
         maxSpeed = 320f;
         explodeQuad.SetActive(false);
+    }
+    
+    /*
+        Read the next line of the I/O motor powers file.
+        Takes:
+            string filePath = path to the I/O file
+        Returns:
+            string containing line read
+    */
+    private string ReadTextFile(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            StreamReader reader = new StreamReader(filePath);
+            string line = reader.ReadLine();
+            if (line != null)
+            {
+                Debug.LogWarning("Input: " + line); // Should be a 8-element list of motor powers
+                return line;
+            }
+            else
+            {
+                Debug.LogWarning("The file is empty or the first line is null.");
+            }
+        }
+        else
+        {
+            Debug.LogError("File not found at: " + filePath);
+        }
+        return null;
     }
 
     // FixedUpdate is called once per fixed frame (physics engine)
