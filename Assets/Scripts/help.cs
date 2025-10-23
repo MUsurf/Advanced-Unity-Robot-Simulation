@@ -4,8 +4,6 @@ using System.Text;
 using UnityEngine;
 using System;
 
-// thanks ai
-
 public class help : MonoBehaviour
 {
 
