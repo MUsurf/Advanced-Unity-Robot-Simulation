@@ -5,6 +5,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System.IO;
 using System;
+using System.Xml.Linq;
 
 // TODO - max thrust is - 51.4 N and 40 N
 // TODO - invert mouse button
@@ -15,8 +16,8 @@ public class MotorScript : MonoBehaviour
 {
     private static string fileName = "motorIO.txt";
     float[] motorPowers = new float[8];
-    
-    private string inputFilePath = Path.Combine(Application.dataPath, "Assets", fileName);
+
+    private string inputFilePath = "C:\\Users\\tucke\\CompSciProjects\\Advanced-Unity-Robot-Simulation\\Assets\\motorIO.txt.txt"; //Path.Combine(Application.dataPath, fileName);
     public Rigidbody rb;
     public float maxSpeed;
     private Vector3[] force = new Vector3[8];
@@ -96,13 +97,14 @@ public class MotorScript : MonoBehaviour
             string line = reader.ReadLine();
             if (line != null)
             {
-                Debug.LogWarning("Input: " + line); // Should be a 8-element list of motor powers
+                Debug.Log("Input: " + line); // Should be a 8-element list of motor powers
                 return line;
             }
             else
             {
                 Debug.LogWarning("The file is empty or the first line is null.");
             }
+            reader.Close();
         }
         else
         {
@@ -121,12 +123,12 @@ public class MotorScript : MonoBehaviour
 
         for (int i = 0; i < force.Length / 2; i++)
         {
-            force[i] = new Vector3((testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100) * (Mathf.Sqrt(2)/2), 0, (testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100) * (Mathf.Sqrt(2)/2));
+            force[i] = new Vector3((motorPowers[i] < 0 ? motorPowers[i] * 40 / 100 : motorPowers[i] * 51.4f / 100) * (Mathf.Sqrt(2)/2), 0, (motorPowers[i] < 0 ? motorPowers[i] * 40 / 100 : motorPowers[i] * 51.4f / 100) * (Mathf.Sqrt(2)/2));
         }
         
         for(int i = force.Length / 2; i < force.Length; i++)
         {
-            force[i] = new Vector3(0, testScript.powerList[i] < 0 ? testScript.powerList[i] * 40 / 100 : testScript.powerList[i] * 51.4f / 100, 0);
+            force[i] = new Vector3(0, motorPowers[i] < 0 ? motorPowers[i] * 40 / 100 : motorPowers[i] * 51.4f / 100, 0);
         }
 
         // Debug.Log($"force[0]: {force[0]}, force[1]: {force[1]}, force[2]: {force[2]}, force[3]: {force[3]}, force[4]: {force[4]}, force[5]: {force[5]}, force[6]: {force[6]}, force[7]: {force[7]}");

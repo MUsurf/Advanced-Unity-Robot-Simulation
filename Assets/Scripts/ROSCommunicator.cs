@@ -26,6 +26,6 @@ public class ROSCommunicator : MonoBehaviour
 
         lastAngularVelocity = subRigidbody.angularVelocity;
 
-        File.WriteAllLines("D:\\Unity\\Games\\SURF Advanced Robot Simulation\\robotdata.txt", new string[] { $"{acceleration.x}, {acceleration.y}, {acceleration.z}, {angularAcceleration.x}, {angularAcceleration.y}, {angularAcceleration.z}" });
+        File.WriteAllLines("C:\\Users\\tucke\\CompSciProjects\\Advanced-Unity-Robot-Simulation\\robotdata.txt", new string[] { $"{acceleration.x}, {acceleration.y}, {acceleration.z}, {angularAcceleration.x}, {angularAcceleration.y}, {angularAcceleration.z}" });
     }
 }
